@@ -8,6 +8,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
 
+from src.components.data_transformation import DataTansformation
+from src.components.data_transformation import DataTansformationConfig
+
 @dataclass
 class DataIngestionConfig:
     train_data_path: str = os.path.join('artifacts', "train.csv")
@@ -49,7 +52,18 @@ class DataIngestion:
             raise CustomException(e,sys)
 
 if __name__ =="__main__":
-    obj=DataIngestion()
-    obj.initiate_data_ingestion()
+    from src.components.model_trainer import ModelTrainer
+
+    obj = DataIngestion()
+    train_data, test_data = obj.initiate_data_ingestion()
+
+    data_transformation = DataTansformation()
+    train_arr, test_arr, _ = data_transformation.initiate_data_tranformation(train_data, test_data)
+
+    model_trainer = ModelTrainer()
+    r2 = model_trainer.initiate_model_trainer(train_arr, test_arr)
+    print(f"Best model R2 Score: {r2}")
+
+
 
 
